@@ -70,6 +70,7 @@ def upload_image_to_s3(
     content_type: Optional[str],
     user_profile: UserProfile,
     contents: bytes,
+    ACL=None
 ) -> None:
     key = bucket.Object(file_name)
     metadata = {
@@ -88,6 +89,7 @@ def upload_image_to_s3(
         Metadata=metadata,
         ContentType=content_type,
         ContentDisposition=content_disposition,
+        ACL=ACL,
     )
 
 
@@ -243,6 +245,7 @@ class S3UploadBackend(ZulipUploadBackend):
             content_type,
             target_user_profile,
             image_data,
+            ACL='public-read',
         )
 
         # custom 500px wide version
@@ -253,6 +256,7 @@ class S3UploadBackend(ZulipUploadBackend):
             "image/png",
             target_user_profile,
             resized_medium,
+            ACL='public-read',
         )
 
         resized_data = resize_avatar(image_data)
@@ -262,6 +266,7 @@ class S3UploadBackend(ZulipUploadBackend):
             "image/png",
             target_user_profile,
             resized_data,
+            ACL='public-read',
         )
         # See avatar_url in avatar.py for URL.  (That code also handles the case
         # that users use gravatar.)
